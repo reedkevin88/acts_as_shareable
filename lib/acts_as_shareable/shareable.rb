@@ -73,7 +73,7 @@ module ActsAsShareable  #:nodoc:
         
       def share_to(object, by_user)
         unless shared_to?(object, by_user)
-          s = Share.new(:user_id=>by_user.id, :shared_to_type=>object.class.to_s, :shared_to_id=>object.id)
+          s = Share.new(:user_id=>by_user.id, :shared_to_type=>object.class.name, :shared_to_id=>object.id)
           self.shares << s
           #object.sharings << s
           self.save!
@@ -81,7 +81,7 @@ module ActsAsShareable  #:nodoc:
       end
         
       def remove_share_from(object, by_user)
-        shareable = self.base_class.name
+        shareable = self.class.name
         to = object.class.name
         s = Share.find(:first, :conditions=>["shareable_type = ? and shareable_id = ? and shared_to_type = ? and shared_to_id = ? and user_id=?", shareable, id, to, object.id, by_user.id])
         if s
@@ -92,7 +92,7 @@ module ActsAsShareable  #:nodoc:
       end
         
       def shared_to?(object, by_user)
-        shareable = self.base_class.name
+        shareable = self.class.name
         to = object.class.name
         s = Share.find(:first, :conditions=>["shareable_type = ? and shareable_id = ? and shared_to_type = ? and shared_to_id = ? and user_id=?", shareable, id, to, object.id, by_user.id])
         return !s.nil?

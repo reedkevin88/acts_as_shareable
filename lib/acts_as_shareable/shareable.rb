@@ -17,7 +17,7 @@ module ActsAsShareable  #:nodoc:
     module SingletonMethods
       
       def find_shares_by_user(user, *opts)      
-        shareable = ActiveRecord::Base.send(:class_name_of_active_record_descendant, self).to_s
+        shareable = ActiveRecord::Base.send(self.base_class.name?, self).to_s
         
         options = { :joins=>"LEFT OUTER JOIN shares s ON s.shareable_id = #{self.table_name}.id",
                     :select=>"#{self.table_name}.*",
@@ -29,8 +29,8 @@ module ActsAsShareable  #:nodoc:
       end
         
       def find_by_shared_to(object, *opts)
-        shareable = ActiveRecord::Base.send(:class_name_of_active_record_descendant, self).to_s
-        shared_to = ActiveRecord::Base.send(:class_name_of_active_record_descendant, object.class).to_s
+        shareable = ActiveRecord::Base.send(self.base_class.name?, self).to_s
+        shared_to = ActiveRecord::Base.send(self.base_class.name?, object.class).to_s
 
         options = { :joins=>"LEFT OUTER JOIN shares s ON s.shareable_id = #{self.table_name}.id",
                     :select=>"#{self.table_name}.*",
@@ -42,8 +42,8 @@ module ActsAsShareable  #:nodoc:
       end
         
       def find_by_shared_to_and_user(object, user, *opts)
-        shareable = ActiveRecord::Base.send(:class_name_of_active_record_descendant, self).to_s
-        shared_to = ActiveRecord::Base.send(:class_name_of_active_record_descendant, object.class).to_s
+        shareable = ActiveRecord::Base.send(self.base_class.name?, self).to_s
+        shared_to = ActiveRecord::Base.send(self.base_class.name?, object.class).to_s
 
         options = { :joins=>"LEFT OUTER JOIN shares s ON s.shareable_id = #{self.table_name}.id",
                     :select=>"#{self.table_name}.*",
@@ -81,8 +81,8 @@ module ActsAsShareable  #:nodoc:
       end
         
       def remove_share_from(object, by_user)
-        shareable = ActiveRecord::Base.send(:class_name_of_active_record_descendant, self.class).to_s
-        to = ActiveRecord::Base.send(:class_name_of_active_record_descendant, object.class).to_s
+        shareable = ActiveRecord::Base.send(self.base_class.name?, self.class).to_s
+        to = ActiveRecord::Base.send(self.base_class.name?, object.class).to_s
         s = Share.find(:first, :conditions=>["shareable_type = ? and shareable_id = ? and shared_to_type = ? and shared_to_id = ? and user_id=?", shareable, id, to, object.id, by_user.id])
         if s
           s.destroy
@@ -92,8 +92,8 @@ module ActsAsShareable  #:nodoc:
       end
         
       def shared_to?(object, by_user)
-        shareable = ActiveRecord::Base.send(:class_name_of_active_record_descendant, self.class).to_s
-        to = ActiveRecord::Base.send(:class_name_of_active_record_descendant, object.class).to_s
+        shareable = ActiveRecord::Base.send(:self.base_class.name?, self.class).to_s
+        to = ActiveRecord::Base.send(:self.base_class.name?, object.class).to_s
         s = Share.find(:first, :conditions=>["shareable_type = ? and shareable_id = ? and shared_to_type = ? and shared_to_id = ? and user_id=?", shareable, id, to, object.id, by_user.id])
         return !s.nil?
       end

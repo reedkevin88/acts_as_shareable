@@ -83,7 +83,7 @@ module ActsAsShareable  #:nodoc:
       def remove_share_from(object, by_user)
         shareable = self.class.name
         to = object.class.name
-        s = Share.find("shareable_type = ? and shareable_id = ? and shared_to_type = ? and shared_to_id = ? and user_id=?", shareable, id, to, object.id, by_user.id)
+        s = Share.where("shareable_type = ? and shareable_id = ? and shared_to_type = ? and shared_to_id = ? and user_id=?", shareable, id, to, object.id, by_user.id).first
         if s
           s.destroy
           reload
@@ -94,7 +94,7 @@ module ActsAsShareable  #:nodoc:
       def shared_to?(object, by_user)
         shareable = self.class.name
         to = object.class.name
-        s = Share.find("shareable_type = ? and shareable_id = ? and shared_to_type = ? and shared_to_id = ? and user_id=?", shareable, id, to, object.id, by_user.id)
+        s = Share.where("shareable_type = ? and shareable_id = ? and shared_to_type = ? and shared_to_id = ? and user_id=?", shareable, id, to, object.id, by_user.id).first
         return !s.nil?
       end
 

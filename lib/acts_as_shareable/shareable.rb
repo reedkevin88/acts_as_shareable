@@ -25,7 +25,7 @@ module ActsAsShareable  #:nodoc:
                     :order => "s.created_at DESC"
                   }
 
-        self.find(:all, merge_options(options,opts))
+        self.where(merge_options(options,opts))
       end
         
       def find_by_shared_to(object, *opts)
@@ -38,7 +38,7 @@ module ActsAsShareable  #:nodoc:
                     :order => "s.created_at DESC"
                   }
 
-        self.find(:all, merge_options(options,opts))
+        self.where(merge_options(options,opts))
       end
         
       def find_by_shared_to_and_user(object, user, *opts)
@@ -51,7 +51,7 @@ module ActsAsShareable  #:nodoc:
                     :order => "s.created_at DESC"
                   }
 
-        self.find(:all, merge_options(options,opts))
+        self.where(merge_options(options,opts))
       end
         
       private
@@ -83,7 +83,7 @@ module ActsAsShareable  #:nodoc:
       def remove_share_from(object, by_user)
         shareable = self.class.name
         to = object.class.name
-        s = Share.find(:first, :conditions=>["shareable_type = ? and shareable_id = ? and shared_to_type = ? and shared_to_id = ? and user_id=?", shareable, id, to, object.id, by_user.id])
+        s = Share.find("shareable_type = ? and shareable_id = ? and shared_to_type = ? and shared_to_id = ? and user_id=?", shareable, id, to, object.id, by_user.id)
         if s
           s.destroy
           reload
@@ -94,7 +94,7 @@ module ActsAsShareable  #:nodoc:
       def shared_to?(object, by_user)
         shareable = self.class.name
         to = object.class.name
-        s = Share.find(:first, :conditions=>["shareable_type = ? and shareable_id = ? and shared_to_type = ? and shared_to_id = ? and user_id=?", shareable, id, to, object.id, by_user.id])
+        s = Share.find("shareable_type = ? and shareable_id = ? and shared_to_type = ? and shared_to_id = ? and user_id=?", shareable, id, to, object.id, by_user.id)
         return !s.nil?
       end
 

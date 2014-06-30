@@ -19,13 +19,7 @@ module ActsAsShareable  #:nodoc:
       def find_shares_by_user(user, *opts)      
         shareable = self.base_class.name
         
-        options = { :joins=>"LEFT OUTER JOIN shares s ON s.shareable_id = #{self.table_name}.id",
-                    :select=>"#{self.table_name}.*",
-                    :conditions => ["s.user_id = ? AND s.shareable_type =?", user.id,shareable],
-                    :order => "s.created_at DESC"
-                  }
-
-        self.where(merge_options(options,opts))
+        self.includes(:shares).where(shares: {user_id: user.id, shareable_type: shareable})
       end
         
       def find_by_shared_to(object, *opts)
@@ -37,8 +31,7 @@ module ActsAsShareable  #:nodoc:
                     :conditions => ["s.shareable_type =? and s.shared_to_type=? and s.shared_to_id = ?", shareable, shared_to, object.id],
                     :order => "s.created_at DESC"
                   }
-
-        self.where(merge_options(options,opts))
+        self.includes(:shares).where(shares: {shareable_type: shareable, shared_to_type: shared_to, shared_to_id: object.id})
       end
         
       def find_by_shared_to_and_user(object, user, *opts)
